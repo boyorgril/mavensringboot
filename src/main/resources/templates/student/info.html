@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>选课系统</title>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<script th:inline="javascript" type="text/javascript" charset="utf-8">
+    window.onload = load();
+    function load(){
+        var userId = [[${userId}]];
+        if([[${currentScore}]] != null){
+            sessionStorage.setItem("userId",userId);
+            sessionStorage.setItem("currentScore",[[${currentScore}]]);
+            sessionStorage.setItem("status",[[${status}]]);
+        }
+        if(sessionStorage.getItem("status") == '1'){
+            document.getElementById("infoShow").text = "研究生 总学分" + sessionStorage.getItem("currentScore");
+        }else{
+            document.getElementById("infoShow").text = "本科生 总学分" + sessionStorage.getItem("currentScore");
+
+        }
+    }
+</script>
+<body>
+<h1 id="infoShow"></h1>
+<ol>
+    <table border="1">
+        <tr>
+            <th></th>
+            <th>课程id</th>
+            <th>课程编号</th>
+            <th>课程名称</th>
+            <th>老师</th>
+            <th>简介</th>
+            <th>学分</th>
+            <th>最大人数</th>
+            <th>现在人数</th>
+        </tr>
+        <tr th:each=" course : ${allCourse}">
+            <td><input th:name="courseId" type="checkbox" th:value="${course.id}"/></td>
+            <td th:text="${course.id}" th:onclick= "'javascript:showCourseStudent('+${course.id}+')' " ></td>
+            <td th:text="${course.courseNumber}"></td>
+            <td th:text="${course.courseName}"></td>
+            <td th:text="${course.teacher}"></td>
+            <td th:text="${course.introduction}"></td>
+            <td th:id="${course.id}" th:text="${course.score}"></td>
+            <td th:text="${course.maxNumberOfStudent}"></td>
+            <td th:id="${course.id}+${course.score}" th:text="${course.numberOfStudent}"></td>
+        </tr>
+    </table>
+</ol>
+<div>
+    <button id="submitCourse" onclick="submitCourse()" style="background-color: #4cae4c">提交课程信息</button>
+    <button id="chooseCourse" onclick="chooseCourse()" style="background-color: #4cae4c">已选课程信息</button>
+</div>
+</body>
+
+<script th:inline="javascript" type="text/javascript" charset="utf-8">
+
+    function submitCourse() {
+        var stringCourseId = "";
+        var total_score = [[${currentScore}]];
+
+        $('input[name="courseId"]:checked').each(function(){
+            var courseId = $(this).val();
+            stringCourseId = stringCourseId + $(this).val() + ",";
+            total_score = parseInt(document.getElementById(courseId).innerText) + total_score;
+        });
+        if(sessionStorage.getItem("status") == '1' && total_score < 30 ){
+            javascript:window.location.href= '/student/chooseCourse?courseId='+ stringCourseId;
+        }else if(sessionStorage.getItem("status") == '0' && total_score < 30 ){
+            javascript:window.location.href= '/student/chooseCourse?courseId='+ stringCourseId;
+        }
+    }
+
+    function chooseCourse(){
+        javascript:window.location.href= '/student/chooseCourse';
+    }
+
+
+</script>
+
+</html>

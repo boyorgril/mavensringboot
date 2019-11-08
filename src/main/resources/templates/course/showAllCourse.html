@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>课程信息展示</title>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<ol>
+        <table border="1">
+            <tr>
+                <th>课程id</th>
+                <th>课程编号</th>
+                <th>课程名称</th>
+                <th>老师</th>
+                <th>简介</th>
+                <th>学分</th>
+                <th>最大人数</th>
+                <th>现在人数</th>
+                <th>操作</th>
+            </tr>
+            <tr th:each=" course : ${allCourse}" th:id="${course.id}">
+                <td th:text="${course.id}" th:onclick= "'javascript:showCourseStudent('+${course.id}+')' " ></td>
+                <td th:text="${course.courseNumber}"></td>
+                <td th:text="${course.courseName}"></td>
+                <th th:text="${course.teacher}"></th>
+                <th th:text="${course.introduction}"></th>
+                <th th:text="${course.score}"></th>
+                <th th:text="${course.maxNumberOfStudent}"></th>
+                <th th:text="${course.numberOfStudent}"></th>
+                <th><button th:onclick="'javascript:updateCourseInfo('+${course.id}+')' ">修改课程信息</button></th>
+            </tr>
+        </table>
+</ol>
+<div>
+    <form id="courseForm" name = "courseForm" style="display: none" onsubmit="return checkreg()" method = "post" action="/course/updateCourseInfo">
+        <div style="display: none">
+            <span>课程id:<input id = "courseid" name = "courseid"></span>
+        </div>
+        <div>
+            <span>课程名称:<input id = "coursename" name = "coursename"></span>
+        </div>
+        <div>
+            <span>课程编号:<input id = "coursenumber" name = "coursenumber" type = "text"></span>
+        </div>
+        <div>
+            <span>教师:<input id = "teacher" name = "teacher" type = "text"></span>
+        </div>
+        <div>
+            <span>简介:<input id = "introduction" name = "introduction" type = "text"></span>
+        </div>
+        <div style="display: none">
+            <span>旧学分:<input id = "oldscore" name = "oldscore" type = "text"></span>
+        </div>
+        <div>
+            <span>学分:<input id = "score" name = "score" type = "text"></span>
+        </div>
+        <button type="button" onclick="formSubmit()" style="background-color: #d5d5d5;color: crimson">课程信息提交</button>
+    </form>
+</div>
+<div>
+    <button style="background-color: #46b8da;color: #c9302c" th:onclick="'javascript:window.history.back(-1)'">返回上级菜单</button>
+</div>
+</body>
+<script th:inline="javascript" type="text/javascript" charset="utf-8">
+
+    function updateCourseInfo(courseId) {
+        var rows=document.getElementById(courseId);
+        document.getElementById("courseid").value = courseId;
+        document.getElementById("coursename").value = rows.cells[2].innerHTML;
+        document.getElementById("coursenumber").value = rows.cells[1].innerHTML;
+        document.getElementById("teacher").value = rows.cells[3].innerHTML;
+        document.getElementById("introduction").value = rows.cells[4].innerHTML;
+        document.getElementById("score").value = rows.cells[5].innerHTML;
+        document.getElementById("oldscore").value = rows.cells[5].innerHTML;
+        document.getElementById("courseForm").style.display = "block";
+    }
+
+    function formSubmit(){
+        //document.getElementById("courseForm").submit();
+        $.ajax({
+            type : "POST", //提交方式
+            url : "/course/updateCourseInfo",//路径
+            data : {
+                courseid : document.getElementById("courseid").value,
+                coursename : document.getElementById("coursename").value,
+                coursenumber : document.getElementById("coursenumber").value,
+                teacher : document.getElementById("teacher").value,
+                introduction : document.getElementById("introduction").value,
+                score : document.getElementById("score").value,
+                oldscore : document.getElementById("oldscore").value
+            }
+        });
+        var rows=document.getElementById(document.getElementById("courseid").value);
+        rows.cells[2].innerHTML = document.getElementById("coursename").value;
+        rows.cells[1].innerHTML = document.getElementById("coursenumber").value;
+        rows.cells[3].innerHTML = document.getElementById("teacher").value
+        rows.cells[4].innerHTML = document.getElementById("introduction").value;
+        rows.cells[5].innerHTML = document.getElementById("score").value;
+        document.getElementById("courseForm").style.display = "none";
+    }
+
+    function checkreg(){
+        if(confirm("检查信息是否完善，确定要提交信息？")){
+            return true;
+        }else {
+            return  false;
+        }
+    }
+
+    function showCourseStudent(courseId) {
+        javascript:window.location.href= '/course/studentOfCourse?courseId='+ courseId;
+    }
+</script>
+</html>

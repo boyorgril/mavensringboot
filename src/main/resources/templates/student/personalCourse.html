@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>个人课程信息展示</title>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<script th:inline="javascript" type="text/javascript" charset="utf-8">
+
+    $(document).ready( function(){
+        var userId = JSON.parse(sessionStorage.getItem("userId",userId));
+        if(userId == 0){
+            document.getElementById("delete").disabled= true;
+            document.getElementById("choose").disabled= true;
+            document.getElementById("back").style.display = "block";
+        }
+    } );
+</script>
+<body>
+<ol>
+    <table border="1">
+        <tr>
+            <th></th>
+            <th>课程id</th>
+            <th>课程编号</th>
+            <th>课程名称</th>
+            <th>老师</th>
+            <th>简介</th>
+            <th>学分</th>
+            <th>最大人数</th>
+            <th>现在人数</th>
+        </tr>
+        <tr th:each=" course : ${allCourse}">
+            <td><input th:name="courseId" type="checkbox" th:value="${course.id}"/></td>
+            <td th:text="${course.id}" th:onclick= "'javascript:showCourseStudent('+${course.id}+')' " ></td>
+            <td th:text="${course.courseNumber}"></td>
+            <td th:text="${course.courseName}"></td>
+            <td th:text="${course.teacher}"></td>
+            <td th:text="${course.introduction}"></td>
+            <td th:id="${course.id}" th:text="${course.score}"></td>
+            <td th:text="${course.maxNumberOfStudent}"></td>
+            <td th:text="${course.numberOfStudent}"></td>
+        </tr>
+    </table>
+</ol>
+<div>
+    <button id="delete" style="display: block;background-color: orangered;color: green" onclick="deleteChooseCourse()">删除已选课程</button>
+    <button id="choose" style="display: block;background-color: orangered;color: green" onclick="noChooseCourse()">选课列表</button>
+    <button id="back" style="display: none;background-color: #2919ff;color: #bd0002" th:onclick="'javascript:window.history.back(-1)'">返回上一级</button>
+</div>
+</body>
+<script th:inline="javascript" type="text/javascript" charset="utf-8">
+
+    function noChooseCourse() {
+        javascript:window.location.href= '/student/noChooseCourse';
+    }
+
+    function deleteChooseCourse() {
+        var stringCourseId = "";
+        $('input[name="courseId"]:checked').each(function(){
+            var courseId = $(this).val();
+            stringCourseId = stringCourseId + $(this).val() + ",";
+        });
+        javascript:window.location.href= '/student/deleteChooseCourse?courseId='+ stringCourseId;
+
+    }
+
+</script>
+</html>

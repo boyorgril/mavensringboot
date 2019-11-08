@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>课程学生信息展示</title>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<ol>
+    <span>课程名称:<h1 th:text="${courseInfo.courseNumber}"></h1></span>
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>姓名</th>
+            <th>学号</th>
+            <th>性别</th>
+            <th>年级</th>
+            <th>专业</th>
+            <th>学生总学分</th>
+            <th>导师</th>
+            <th>研究方向</th>
+            <th>班级</th>
+            <th>班主任</th>
+            <th>学生类别</th>
+        </tr>
+        <tr th:each=" student : ${AllStudent}">
+            <td th:text="${student.id}" th:onclick= "'javascript:showCourseStudent('+${student.id}+')' " ></td>
+            <td th:text="${student.name}"></td>
+            <td th:text="${student.empId}"></td>
+            <th th:text="${student.sex}"></th>
+            <th th:text="${student.grade}"></th>
+            <th th:text="${student.profession}"></th>
+            <th th:text="${student.totalScore}"></th>
+            <th th:text="${student.tutor}"></th>
+            <th th:text="${student.searchDirection}"></th>
+            <th th:text="${student.teacherName}"></th>
+            <th th:text="${student.myclass}"></th>
+            <th th:text="${student.status} == 1 ? '研究生': '本科生'"></th>
+        </tr>
+    </table>
+</ol>
+<div>
+    <button style="background-color: #0096da;color: #c9001e" th:onclick="'javascript:window.history.back(-1)'">返回上级菜单</button>
+</div>
+</body>
+<script th:inline="javascript" type="text/javascript" charset="utf-8">
+
+    function showCourseStudent(courseId) {
+        javascript:window.location.href= '/course/studentOfCourse?courseId='+ courseId;
+    }
+</script>
+</html>

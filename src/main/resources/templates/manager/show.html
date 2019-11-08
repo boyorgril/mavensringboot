@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<script th:inline="javascript" type="text/javascript" charset="utf-8">
+    window.onload = load();
+    function load(){
+        var userId = [[${userId}]];
+        sessionStorage.setItem("userId",userId);
+    }
+
+</script>
+<body>
+<div>
+    <div style="width: 40%;float: left">
+        <h1>所有信息必填！！！</h1>
+        <form id="studentForm" name = "studentForm" onsubmit="return checkreg()" method = "post" action="/student/savePersonalInfo">
+            <div>
+                <span>姓名:<input id = "name" name = "name"></span>
+            </div>
+            <div>
+                <span>学号:<input id = "empId" name = "empId" type = "text"></span>
+            </div>
+            <div>
+                <span>性别:<input id = "sex" name = "sex"></span>
+            </div>
+            <div>
+                <span>出生日期:<input id = "birthday" name = "birthday" type = "datetime-local"></span>
+            </div>
+            <div>
+                <span>年级:<input id = "grade" name = "grade"></span>
+            </div>
+            <div>
+                <span>专业:<input id = "profession" name = "profession"></span>
+            </div>
+            <div>
+                <input name = "studentType" type="radio" value="gradute1">本科生
+                <input name = "studentType" type="radio" value="gradute2">研究生
+                <input id = "status" name = "status" style="display: none">
+            </div>
+            <div id = "undergradute" name = "undergradute" style = "display: none">
+                <div>
+                    <span>班级:<input id = "myclass" name = "myclass"></span>
+                </div>
+                <div>
+                    <span>班主任:<input id = "teacherName" name = "teacherName"></span>
+                </div>
+            </div>
+
+            <div id = "postgradute" name = "postgradute" style = "display: none">
+                <div>
+                    <span>导师:<input id = "tutor" name = "tutor"></span>
+                </div>
+                <div>
+                    <span>研究方向:<input id = "searchDirection" name = "searchDirection"></span>
+                </div>
+            </div>
+
+            <button type = "submit" style="color: #3e8f3e;background-color: #985f0d" >学生信息提交</button>
+        </form>
+        <div style="margin-top: 50px"><button onclick="javascript:window.location.href= '/student/showAllStudent'" style="color: #c12e2a;background-color: #2aabd2">学成信息展示</button></div>
+    </div>
+    <div style="width: 40%;float: left">
+        <h1>所有信息必填！！！</h1>
+        <form id="courseForm" name = "courseForm" onsubmit="return checkreg()" method = "post" action="/course/saveCourseInfo">
+            <div>
+                <span>课程名称:<input id = "coursename" name = "coursename"></span>
+            </div>
+            <div>
+                <span>课程编号:<input id = "coursenumber" name = "coursenumber" type = "text"></span>
+            </div>
+            <div>
+                <span>教师:<input id = "teacher" name = "teacher" type = "text"></span>
+            </div>
+            <div>
+                <span>简介:<input id = "introduction" name = "introduction" type = "text"></span>
+            </div>
+            <div>
+                <span>学分:<input id = "score" name = "score" type = "text"></span>
+            </div>
+            <button type="submit" style="background-color: #d5d5d5;color: crimson">课程信息提交</button>
+        </form>
+        <div style="margin-top: 50px"><button onclick="javascript:window.location.href= '/course/showAllCourse'" style="color: #c12e2a;background-color: #2aabd2">课程信息展示</button></div>
+    </div>
+</div>
+
+</body>
+
+<script th:inline="javascript" type="text/javascript" charset="utf-8">
+
+    function checkreg(){
+       if(confirm("检查信息是否完善，确定要提交信息？")){
+           return true;
+       }else {
+           return  false;
+       }
+    }
+
+    $('input:radio[name="studentType"]').click(function(){
+        var checkValue = $('input:radio[name="studentType"]:checked').val();
+        if(checkValue == "gradute1"){
+            document.getElementById("status").value = '0';
+            document.getElementById("undergradute").style.display ='block';
+            document.getElementById("postgradute").style.display ='none';
+        }else{
+            document.getElementById("status").value = '1';
+            document.getElementById("postgradute").style.display ='block';
+            document.getElementById("undergradute").style.display ='none';
+        }
+    });
+</script>
+
+</html>

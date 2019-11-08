@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>学生信息展示</title>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<h1 style="color: #c9302c">点击id，查看学生所选课程</h1>
+<ol>
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>姓名</th>
+            <th>学号</th>
+            <th>性别</th>
+            <th>年级</th>
+            <th>专业</th>
+            <th>学生总学分</th>
+            <th>导师</th>
+            <th>研究方向</th>
+            <th>班主任</th>
+            <th>班级</th>
+            <th>学生类别</th>
+            <th>操作</th>
+        </tr>
+        <tr th:each=" student : ${studentInfo}" th:id="${student.id}">
+            <td th:text="${student.id}" th:onclick= "'javascript:showCourseOfStudent('+${student.id}+')' " ></td>
+            <td th:text="${student.name}"></td>
+            <td th:text="${student.empId}"></td>
+            <th th:text="${student.sex}"></th>
+            <th th:text="${student.grade}"></th>
+            <th th:text="${student.profession}"></th>
+            <th th:text="${student.totalScore}"></th>
+            <th th:text="${student.tutor}"></th>
+            <th th:text="${student.searchDirection}"></th>
+            <th th:text="${student.teacherName}"></th>
+            <th th:text="${student.myclass}"></th>
+            <th th:text="${student.status} == 1 ? '研究生': '本科生'"></th>
+            <th><button th:onclick="'javascript:updateCourseInfo('+${student.id}+')' ">修改学生信息</button></th>
+        </tr>
+    </table>
+</ol>
+
+<form id="studentForm" style="display: none" name = "studentForm">
+    <div style="display: none">
+        <span>学生id:<input id = "studentid" name = "studentid"></span>
+    </div>
+    <div>
+        <span>姓名:<input id = "name" name = "name"></span>
+    </div>
+    <div>
+        <span>学号:<input id = "empId" name = "empId" type = "text"></span>
+    </div>
+    <div>
+        <span>性别:<input id = "sex" name = "sex"></span>
+    </div>
+    <div>
+        <span>年级:<input id = "grade" name = "grade"></span>
+    </div>
+    <div>
+        <span>专业:<input id = "profession" name = "profession"></span>
+    </div>
+    <div id = "undergradute" name = "undergradute" style = "display: none">
+        <div>
+            <span>班级:<input id = "myclass" name = "myclass"></span>
+        </div>
+        <div>
+            <span>班主任:<input id = "teacherName" name = "teacherName"></span>
+        </div>
+    </div>
+    <div id = "postgradute" name = "postgradute" style = "display: none">
+        <div>
+            <span>导师:<input id = "tutor" name = "tutor"></span>
+        </div>
+        <div>
+            <span>研究方向:<input id = "searchDirection" name = "searchDirection"></span>
+        </div>
+    </div>
+
+    <button onclick="infoSubmit()" type="button" style="color: #3e8f3e;background-color: #985f0d" >学生信息修改</button>
+</form>
+
+<div>
+    <button style="background-color: #5cb85c;color: orangered" th:onclick="'javascript:window.history.back(-1)'">返回主菜单</button>
+</div>
+</body>
+
+<script th:inline="javascript" type="text/javascript" charset="utf-8">
+
+    function infoSubmit() {
+        $.ajax({
+            type : "POST", //提交方式
+            url : "/student/updateCourseInfo",//路径
+            data : {
+                id : document.getElementById("studentid").value,
+                name : document.getElementById("name").value,
+                empId : document.getElementById("empId").value,
+                sex : document.getElementById("sex").value,
+                grade : document.getElementById("grade").value,
+                profession : document.getElementById("profession").value,
+                myclass : document.getElementById("myclass").value,
+                teacherName : document.getElementById("teacherName").value,
+                tutor : document.getElementById("tutor").value,
+                searchDirection : document.getElementById("searchDirection").value
+            }
+        });
+        var rows=document.getElementById(document.getElementById("studentid").value);
+        document.getElementById("studentid").value = studentid;
+        rows.cells[1].innerHTML = document.getElementById("name").value;
+        rows.cells[2].innerHTML = document.getElementById("empId").value;
+        rows.cells[3].innerHTML = document.getElementById("sex").value;
+        rows.cells[4].innerHTML = document.getElementById("grade").value;
+        rows.cells[5].innerHTML = document.getElementById("profession").value;
+        rows.cells[10].innerHTML = document.getElementById("myclass").value;
+        rows.cells[9].innerHTML = document.getElementById("teacherName").value;
+        rows.cells[7].innerHTML = document.getElementById("tutor").value;
+        rows.cells[8].innerHTML = document.getElementById("searchDirection").value;
+        document.getElementById("studentForm").style.display = "none";
+    }
+
+    function updateCourseInfo(studentid) {
+        var rows=document.getElementById(studentid);
+        document.getElementById("studentid").value = studentid;
+        document.getElementById("name").value = rows.cells[1].innerHTML;
+        document.getElementById("empId").value = rows.cells[2].innerHTML;
+        document.getElementById("sex").value = rows.cells[3].innerHTML;
+        document.getElementById("grade").value = rows.cells[4].innerHTML;
+        document.getElementById("profession").value = rows.cells[5].innerHTML;
+        if(rows.cells[11].innerHTML == "本科生"){
+            document.getElementById("undergradute").style.display = "block";
+            document.getElementById("postgradute").style.display = "none";
+            document.getElementById("myclass").value = rows.cells[10].innerHTML;
+            document.getElementById("teacherName").value = rows.cells[9].innerHTML;
+        }else{
+            document.getElementById("postgradute").style.display = "block";
+            document.getElementById("undergradute").style.display = "none";
+            document.getElementById("tutor").value = rows.cells[7].innerHTML;
+            document.getElementById("searchDirection").value = rows.cells[8].innerHTML;
+        }
+        document.getElementById("studentForm").style.display = "block";
+    }
+
+    function showCourseOfStudent(studentId) {
+        javascript:window.location.href= '/student/courseOfStudent?studentId='+ studentId;
+    }
+</script>
+</html>
